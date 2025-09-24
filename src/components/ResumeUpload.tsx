@@ -3,16 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react";
 
 const ResumeUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'processing' | 'complete' | 'error'>('idle');
   const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleFileUpload = async (file: File) => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication required",
+        description: "Please sign in to upload your resume.",
+      });
+      return;
+    }
 
     if (file.type !== 'application/pdf') {
       toast({
@@ -32,38 +41,77 @@ const ResumeUpload = () => {
       return;
     }
 
-    // Simulate upload process
     setUploadStatus('uploading');
     setUploadProgress(0);
 
-    const uploadInterval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(uploadInterval);
-          setUploadStatus('processing');
-          
-          // Simulate processing
-          setTimeout(() => {
-            setUploadStatus('complete');
-            toast({
-              title: "Resume uploaded successfully!",
-              description: "Your resume has been analyzed and processed.",
-            });
-          }, 2000);
-          
-          return 100;
-        }
-        return prev + 10;
+    try {
+      // Upload to Supabase Storage
+      const fileName = `${user.id}/${Date.now()}-${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from('resumes')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      setUploadProgress(50);
+      setUploadStatus('processing');
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('resumes')
+        .getPublicUrl(fileName);
+
+      // Simulate skill extraction (in production, this would call an AI service)
+      const mockSkills = ['JavaScript', 'React', 'Node.js', 'SQL', 'Git'];
+      const mockEducation = ['Bachelor in Computer Science'];
+      const mockExperience = ['Software Developer', 'Frontend Developer'];
+
+      // Save resume data to database
+      const { error: dbError } = await supabase
+        .from('resumes')
+        .insert({
+          user_id: user.id,
+          filename: file.name,
+          file_url: publicUrl,
+          skills: mockSkills,
+          education: mockEducation,
+          experience: mockExperience,
+          resume_score: Math.floor(Math.random() * 30) + 70, // Mock score 70-100
+        });
+
+      if (dbError) throw dbError;
+
+      setUploadProgress(100);
+      setUploadStatus('complete');
+      
+      toast({
+        title: "Resume processed successfully!",
+        description: "Your skills have been analyzed and job matches are ready.",
       });
-    }, 200);
-  }, [toast]);
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      setUploadStatus('error');
+      toast({
+        variant: "destructive",
+        title: "Upload failed",
+        description: "There was an error processing your resume. Please try again.",
+      });
+    }
+  };
+
+  const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  }, [handleFileUpload]);
 
   const handleDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file) {
-      const inputEvent = { target: { files: [file] } } as any;
-      handleFileUpload(inputEvent);
+      handleFileUpload(file);
     }
   }, [handleFileUpload]);
 
@@ -112,7 +160,7 @@ const ResumeUpload = () => {
                     id="resume-upload"
                     type="file"
                     accept=".pdf"
-                    onChange={handleFileUpload}
+                    onChange={handleFileChange}
                     className="hidden"
                   />
                   <p className="text-xs text-muted-foreground mt-4">

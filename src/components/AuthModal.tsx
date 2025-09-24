@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mail, Lock, User, ArrowRight } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AuthModalProps {
   trigger: React.ReactNode;
@@ -13,13 +14,26 @@ interface AuthModalProps {
 
 const AuthModal = ({ trigger }: AuthModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    fullName: '',
+  });
+  
+  const { signIn, signUp } = useAuth();
 
   const handleAuth = async (type: 'login' | 'signup') => {
+    if (!formData.email || !formData.password) return;
+
     setIsLoading(true);
-    // Simulate auth process
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    
+    if (type === 'login') {
+      await signIn(formData.email, formData.password);
+    } else {
+      await signUp(formData.email, formData.password, formData.fullName);
+    }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -47,14 +61,27 @@ const AuthModal = ({ trigger }: AuthModalProps) => {
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="email" placeholder="Enter your email" className="pl-10" />
+                    <Input 
+                      id="email" 
+                      placeholder="Enter your email" 
+                      className="pl-10"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="password" type="password" placeholder="Enter your password" className="pl-10" />
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      placeholder="Enter your password" 
+                      className="pl-10"
+                      value={formData.password}
+                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                    />
                   </div>
                 </div>
                 <Button 
@@ -73,21 +100,40 @@ const AuthModal = ({ trigger }: AuthModalProps) => {
                   <Label htmlFor="name">Full Name</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="name" placeholder="Enter your full name" className="pl-10" />
+                    <Input 
+                      id="name" 
+                      placeholder="Enter your full name" 
+                      className="pl-10"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="signup-email" placeholder="Enter your email" className="pl-10" />
+                    <Input 
+                      id="signup-email" 
+                      placeholder="Enter your email" 
+                      className="pl-10"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="signup-password" type="password" placeholder="Create a password" className="pl-10" />
+                    <Input 
+                      id="signup-password" 
+                      type="password" 
+                      placeholder="Create a password" 
+                      className="pl-10"
+                      value={formData.password}
+                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                    />
                   </div>
                 </div>
                 <Button 
