@@ -9,10 +9,11 @@ import { Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AuthModalProps {
-  trigger: React.ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-const AuthModal = ({ trigger }: AuthModalProps) => {
+const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -37,10 +38,7 @@ const AuthModal = ({ trigger }: AuthModalProps) => {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden">
         <Card className="border-0 shadow-none">
           <CardHeader className="bg-gradient-to-br from-primary/5 to-secondary/5 pb-8">
