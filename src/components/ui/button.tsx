@@ -5,18 +5,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary-hover shadow-primary touch-bounce glow-yellow font-semibold",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border-2 border-primary bg-transparent text-foreground hover:bg-primary hover:text-primary-foreground touch-bounce",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-md touch-bounce border border-border",
-        ghost: "hover:bg-muted hover:text-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-primary text-primary-foreground font-bold shadow-glow hover:shadow-glow-strong transform hover:scale-105 touch-bounce glow-yellow-strong",
-        success: "bg-success text-success-foreground hover:bg-success/90 shadow-md touch-bounce"
+        default: "bg-primary text-primary-foreground hover:bg-primary-hover shadow-primary touch-bounce glow-yellow font-semibold transition-all duration-300",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all duration-300",
+        outline: "border-2 border-primary/30 bg-transparent text-foreground hover:bg-primary/10 hover:border-primary/50 touch-bounce transition-all duration-300",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-md touch-bounce border border-border transition-all duration-300",
+        ghost: "hover:bg-muted hover:text-foreground transition-all duration-300",
+        link: "text-primary underline-offset-4 hover:underline transition-all duration-300",
+        hero: "bg-primary text-primary-foreground font-bold shadow-glow hover:shadow-glow-strong hover:scale-[1.03] touch-bounce glow-yellow-strong rounded-xl transition-all duration-300",
+        success: "bg-success text-success-foreground hover:bg-success/90 shadow-md touch-bounce transition-all duration-300"
       },
       size: {
         default: "h-10 px-4 py-2",

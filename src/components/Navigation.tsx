@@ -6,7 +6,20 @@ import AuthModal from "./AuthModal";
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Check localStorage for saved theme preference, default to dark mode
+    const savedTheme = localStorage.getItem('theme');
+    const isDark = savedTheme ? savedTheme === 'dark' : true;
+    
+    // Apply theme on initial load
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+    
+    return isDark;
+  });
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -17,8 +30,16 @@ const Navigation = () => {
   };
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    
+    if (newMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'light');
+    }
   };
 
   return (
