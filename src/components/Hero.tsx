@@ -10,25 +10,26 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-background via-background to-background/95">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse delay-75"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse delay-75"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl"></div>
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto text-center">
           <div className="animate-slide-up">
-            <div className="inline-flex items-center gap-2 bg-primary/10 border-2 border-primary/30 rounded-full px-6 py-2 mb-6">
+            <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-full px-6 py-2 mb-6 backdrop-blur-sm">
               <Zap className="h-4 w-4 text-primary animate-pulse" />
               <span className="text-sm font-bold text-primary">AI-Powered Career Platform</span>
             </div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
               Sync Your Skills with{" "}
-              <span className="text-primary inline-block glow-yellow-strong">
+              <span className="text-primary inline-block glow-yellow-strong drop-shadow-[0_0_25px_rgba(255,193,7,0.5)]">
                 Dream Careers
               </span>
             </h1>

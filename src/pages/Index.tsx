@@ -8,6 +8,11 @@ import SkillsDashboard from "@/components/SkillsDashboard";
 import CareerRoadmap from "@/components/CareerRoadmap";
 import InterviewPrep from "@/components/InterviewPrep";
 import Gamification from "@/components/Gamification";
+import SkillMapVisualizer from "@/components/SkillMapVisualizer";
+import MarketTrendsFeed from "@/components/MarketTrendsFeed";
+import MicroMissions from "@/components/MicroMissions";
+import CareerPathSimulator from "@/components/CareerPathSimulator";
+import ChatBot from "@/components/ChatBot";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -36,9 +41,22 @@ const Index = () => {
       <div id="achievements">
         <Gamification />
       </div>
+      <div id="skill-map">
+        <SkillMapVisualizer />
+      </div>
+      <div id="market-trends">
+        <MarketTrendsFeed />
+      </div>
+      <div id="missions">
+        <MicroMissions />
+      </div>
+      <div id="career-simulator">
+        <CareerPathSimulator />
+      </div>
       <div id="pricing">
         <Pricing />
       </div>
+      <ChatBot />
       <Footer />
     </div>
   );
