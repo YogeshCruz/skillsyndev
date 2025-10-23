@@ -6,6 +6,49 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Resume validation functions
+function looksLikeResume(text: string): boolean {
+  const resumeKeywords = [
+    "experience", "education", "skills", "projects",
+    "summary", "objective", "work history", "employment",
+    "qualifications", "resume", "cv", "curriculum vitae"
+  ];
+  const matches = resumeKeywords.filter(k =>
+    text.toLowerCase().includes(k)
+  );
+  return matches.length >= 2; // heuristic threshold
+}
+
+function validateResumeContent(text: string, fileType: string, fileSize: number): { valid: boolean; reason?: string } {
+  // Check if file is too short or image-only
+  if (fileType.startsWith("image/") || text.length < 400) {
+    return { valid: false, reason: "File too short or image-only" };
+  }
+
+  // Check if it looks like a resume
+  if (!looksLikeResume(text)) {
+    return { valid: false, reason: "Not a résumé-format document" };
+  }
+
+  return { valid: true };
+}
+
+async function extractTextFromPDF(fileBuffer: ArrayBuffer): Promise<string> {
+  // Simple text extraction - decode as UTF-8 and extract readable text
+  const decoder = new TextDecoder('utf-8', { fatal: false });
+  const text = decoder.decode(fileBuffer);
+  
+  // Extract text between PDF content streams (simplified approach)
+  const textMatches = text.match(/\(([^)]+)\)/g) || [];
+  const extractedText = textMatches
+    .map(match => match.slice(1, -1))
+    .join(' ')
+    .replace(/\\[nrt]/g, ' ')
+    .trim();
+  
+  return extractedText || text;
+}
+
 // Rate limiting map: user_id -> { uploads: number, resetTime: number }
 const rateLimitMap = new Map<string, { uploads: number; resetTime: number }>();
 const MAX_UPLOADS_PER_HOUR = 5;
@@ -87,9 +130,23 @@ serve(async (req) => {
       );
     }
 
+    // Get file buffer and extract text for validation
+    const fileBuffer = await file.arrayBuffer();
+    const extractedText = await extractTextFromPDF(fileBuffer);
+    
+    // Validate resume content
+    const validation = validateResumeContent(extractedText, file.type, file.size);
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ 
+          error: `Invalid resume: ${validation.reason}. Please upload a valid resume document.` 
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Upload to Supabase Storage
     const fileName = `${user.id}/${Date.now()}-${file.name}`;
-    const fileBuffer = await file.arrayBuffer();
     
     const { error: uploadError } = await supabase.storage
       .from('resumes')
