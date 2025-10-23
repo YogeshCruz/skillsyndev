@@ -132,12 +132,14 @@ export type Database = {
           created_at: string
           education: string[] | null
           experience: string[] | null
+          file_hash: string | null
           file_url: string
           filename: string
           id: string
           keywords: string[] | null
           parsed_data: Json | null
           resume_score: number | null
+          score_explanation: string | null
           skills: string[] | null
           updated_at: string
           user_id: string
@@ -146,12 +148,14 @@ export type Database = {
           created_at?: string
           education?: string[] | null
           experience?: string[] | null
+          file_hash?: string | null
           file_url: string
           filename: string
           id?: string
           keywords?: string[] | null
           parsed_data?: Json | null
           resume_score?: number | null
+          score_explanation?: string | null
           skills?: string[] | null
           updated_at?: string
           user_id: string
@@ -160,12 +164,14 @@ export type Database = {
           created_at?: string
           education?: string[] | null
           experience?: string[] | null
+          file_hash?: string | null
           file_url?: string
           filename?: string
           id?: string
           keywords?: string[] | null
           parsed_data?: Json | null
           resume_score?: number | null
+          score_explanation?: string | null
           skills?: string[] | null
           updated_at?: string
           user_id?: string

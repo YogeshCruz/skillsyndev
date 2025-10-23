@@ -31,7 +31,7 @@ const SkillsDashboard = () => {
       // Fetch user's latest resume data
       const { data: resumes } = await supabase
         .from('resumes')
-        .select('skills, resume_score')
+        .select('skills, resume_score, score_explanation')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1);
@@ -39,6 +39,11 @@ const SkillsDashboard = () => {
       if (resumes && resumes.length > 0) {
         setUserSkills(resumes[0].skills || []);
         setResumeScore(resumes[0].resume_score || 0);
+        
+        // Store score explanation if available
+        if (resumes[0].score_explanation) {
+          sessionStorage.setItem('resumeScoreExplanation', resumes[0].score_explanation);
+        }
       }
 
       // Fetch learning recommendations
@@ -140,8 +145,18 @@ const SkillsDashboard = () => {
                 <Card className="p-6 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
                   <div className="text-center">
                     <h3 className="text-2xl font-bold mb-2">Resume Score</h3>
-                    <div className="text-4xl font-bold text-primary mb-4">{resumeScore || 0}</div>
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <div className="text-4xl font-bold text-primary">{resumeScore || 0}/100</div>
+                      <Badge variant={resumeScore >= 70 ? "default" : resumeScore >= 40 ? "secondary" : "destructive"}>
+                        {resumeScore >= 91 ? "Excellent" : resumeScore >= 71 ? "Good" : resumeScore >= 41 ? "Average" : resumeScore > 0 ? "Needs Work" : "Not Scored"}
+                      </Badge>
+                    </div>
                     <Progress value={resumeScore || 0} className="max-w-xs mx-auto mb-4" />
+                    {typeof window !== 'undefined' && sessionStorage.getItem('resumeScoreExplanation') && (
+                      <p className="text-sm text-muted-foreground max-w-lg mx-auto mb-4 text-left px-4">
+                        {sessionStorage.getItem('resumeScoreExplanation')}
+                      </p>
+                    )}
                     <Button variant="outline" size="sm">Improve Score</Button>
                   </div>
                 </Card>
