@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, X, Send, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Message {
   role: "user" | "assistant";
@@ -22,6 +23,7 @@ const ChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { session } = useAuth();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -33,6 +35,16 @@ const ChatBot = () => {
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
+
+    // Check authentication before sending
+    if (!session?.access_token) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to use the chatbot.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
@@ -59,7 +71,7 @@ const ChatBot = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwa2Vjb3lxbXBzaWRhcW5sa3JwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg3MDIwMTgsImV4cCI6MjA3NDI3ODAxOH0.jku02r9mKSsitsgg5U9cOXbc9MD8o9oEz4Swf1TC2rc`,
+          Authorization: `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({ messages: [...messages, userMessage] }),
       });
