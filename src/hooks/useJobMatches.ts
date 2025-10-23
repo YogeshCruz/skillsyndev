@@ -105,7 +105,9 @@ export const useJobMatches = () => {
 
       setJobMatches(sortedMatches);
     } catch (error) {
-      console.error('Error fetching job matches:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[Dev] Error fetching job matches:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -115,25 +117,40 @@ export const useJobMatches = () => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
-        .from('user_job_matches')
-        .upsert({
-          user_id: user.id,
-          job_role_id: jobId,
-          match_percentage: matchPercentage,
-          matching_skills: matchingSkills,
-          missing_skills: missingSkills,
-          is_saved: true,
-        });
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('No valid session');
+      }
 
-      if (error) throw error;
+      // Call secure edge function
+      const response = await fetch(`https://rpkecoyqmpsidaqnlkrp.supabase.co/functions/v1/job-matches`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'save',
+          jobId,
+          matchPercentage,
+          matchingSkills,
+          missingSkills,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save job match');
+      }
 
       // Update local state
       setJobMatches(prev => prev.map(job => 
         job.id === jobId ? { ...job, is_saved: true } : job
       ));
     } catch (error) {
-      console.error('Error saving job match:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[Dev] Error saving job match:', error);
+      }
     }
   };
 
@@ -141,20 +158,37 @@ export const useJobMatches = () => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
-        .from('user_job_matches')
-        .update({ is_saved: false })
-        .eq('user_id', user.id)
-        .eq('job_role_id', jobId);
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('No valid session');
+      }
 
-      if (error) throw error;
+      // Call secure edge function
+      const response = await fetch(`https://rpkecoyqmpsidaqnlkrp.supabase.co/functions/v1/job-matches`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'unsave',
+          jobId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to unsave job match');
+      }
 
       // Update local state
       setJobMatches(prev => prev.map(job => 
         job.id === jobId ? { ...job, is_saved: false } : job
       ));
     } catch (error) {
-      console.error('Error unsaving job match:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[Dev] Error unsaving job match:', error);
+      }
     }
   };
 

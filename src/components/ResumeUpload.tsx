@@ -45,42 +45,35 @@ const ResumeUpload = () => {
     setUploadProgress(0);
 
     try {
-      // Upload to Supabase Storage
-      const fileName = `${user.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from('resumes')
-        .upload(fileName, file);
+      // Get session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('No valid session');
+      }
 
-      if (uploadError) throw uploadError;
+      // Create form data
+      const formData = new FormData();
+      formData.append('file', file);
 
-      setUploadProgress(50);
+      setUploadProgress(30);
+
+      // Call secure edge function for upload
+      const response = await fetch(`https://rpkecoyqmpsidaqnlkrp.supabase.co/functions/v1/upload-resume`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: formData,
+      });
+
+      setUploadProgress(70);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
       setUploadStatus('processing');
-
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('resumes')
-        .getPublicUrl(fileName);
-
-      // Simulate skill extraction (in production, this would call an AI service)
-      const mockSkills = ['JavaScript', 'React', 'Node.js', 'SQL', 'Git'];
-      const mockEducation = ['Bachelor in Computer Science'];
-      const mockExperience = ['Software Developer', 'Frontend Developer'];
-
-      // Save resume data to database
-      const { error: dbError } = await supabase
-        .from('resumes')
-        .insert({
-          user_id: user.id,
-          filename: file.name,
-          file_url: publicUrl,
-          skills: mockSkills,
-          education: mockEducation,
-          experience: mockExperience,
-          resume_score: Math.floor(Math.random() * 30) + 70, // Mock score 70-100
-        });
-
-      if (dbError) throw dbError;
-
       setUploadProgress(100);
       setUploadStatus('complete');
       
@@ -90,12 +83,15 @@ const ResumeUpload = () => {
       });
 
     } catch (error) {
-      console.error('Upload error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[Dev] Upload error:', error);
+      }
       setUploadStatus('error');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
         variant: "destructive",
         title: "Upload failed",
-        description: "There was an error processing your resume. Please try again.",
+        description: errorMessage.includes('Rate limit') ? errorMessage : "There was an error processing your resume. Please try again.",
       });
     }
   };

@@ -1,1 +1,10 @@
 project_id = "rpkecoyqmpsidaqnlkrp"
+
+[functions.chat]
+verify_jwt = true
+
+[functions.upload-resume]
+verify_jwt = false
+
+[functions.job-matches]
+verify_jwt = false
