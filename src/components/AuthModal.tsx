@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Lock, User, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { validateEmail, validateSignUpForm } from "@/lib/auth-validation";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthModalProps {
   open: boolean;
@@ -20,21 +22,66 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
     password: '',
     fullName: '',
   });
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
   
   const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
 
   const handleAuth = async (type: 'login' | 'signup') => {
-    if (!formData.email || !formData.password) return;
+    // Reset errors
+    setErrors({ email: '', password: '' });
+    
+    if (!formData.email || !formData.password) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoading(true);
     
-    if (type === 'login') {
-      await signIn(formData.email, formData.password);
-    } else {
-      await signUp(formData.email, formData.password, formData.fullName);
+    try {
+      if (type === 'login') {
+        // Basic email validation for login
+        const emailError = validateEmail(formData.email);
+        if (emailError) {
+          setErrors(prev => ({ ...prev, email: emailError }));
+          toast({
+            title: "Validation Error",
+            description: emailError,
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+        
+        await signIn(formData.email, formData.password);
+      } else {
+        // Full validation for signup including breach check
+        const validation = await validateSignUpForm(formData.email, formData.password);
+        
+        if (!validation.isValid) {
+          toast({
+            title: "Validation Error",
+            description: validation.error,
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+        
+        await signUp(formData.email, formData.password, formData.fullName);
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
@@ -64,9 +111,18 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
                       placeholder="Enter your email" 
                       className="pl-10"
                       value={formData.email}
-                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, email: e.target.value }));
+                        setErrors(prev => ({ ...prev, email: '' }));
+                      }}
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
@@ -78,9 +134,18 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
                       placeholder="Enter your password" 
                       className="pl-10"
                       value={formData.password}
-                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, password: e.target.value }));
+                        setErrors(prev => ({ ...prev, password: '' }));
+                      }}
                     />
                   </div>
+                  {errors.password && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.password}
+                    </p>
+                  )}
                 </div>
                 <Button 
                   className="w-full mt-6" 
@@ -130,9 +195,15 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
                       placeholder="Create a password" 
                       className="pl-10"
                       value={formData.password}
-                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, password: e.target.value }));
+                        setErrors(prev => ({ ...prev, password: '' }));
+                      }}
                     />
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    Must be 8+ characters with uppercase, lowercase, and a number
+                  </p>
                 </div>
                 <Button 
                   className="w-full mt-6" 
