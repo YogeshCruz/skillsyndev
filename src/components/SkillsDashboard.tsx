@@ -49,7 +49,9 @@ const SkillsDashboard = () => {
       
       setLearningRecommendations(recommendations || []);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[Dev] Error fetching user data:', error);
+      }
     }
   };
 

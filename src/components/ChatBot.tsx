@@ -112,7 +112,9 @@ const ChatBot = () => {
         }
       }
     } catch (error) {
-      console.error("Chat error:", error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[Dev] Chat error:', error);
+      }
       toast({
         title: "Error",
         description: "Failed to get response. Please try again.",
