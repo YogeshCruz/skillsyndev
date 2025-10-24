@@ -81,9 +81,138 @@ const InterviewPrep = () => {
               <MessageSquare className="h-4 w-4 text-primary" />
               <span className="text-sm font-semibold text-primary">AI-Powered</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Interview Practice</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Improve Your Resume Score</h2>
             <p className="text-muted-foreground text-lg">
-              Top questions based on your target role and skill gaps
+              Section-wise suggestions to strengthen your resume
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <Card className="card-elevated hover:card-glow transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="outline" className="border-primary text-primary">
+                    Experience
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">Add Measurable Achievements</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Quantify your impact with specific metrics and results:
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Use numbers: "Increased sales by 35%"</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Show scale: "Managed team of 12 developers"</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Highlight impact: "Reduced costs by $50K annually"</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="card-elevated hover:card-glow transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="outline" className="border-secondary text-secondary">
+                    Skills
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">List Relevant Technical Skills</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Optimize your skills section for better matches:
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Include industry keywords and tools</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Group by category (Languages, Frameworks, Tools)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Prioritize in-demand technologies</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="card-elevated hover:card-glow transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="outline" className="border-accent text-accent">
+                    Education
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">Summarize Education Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Keep education clear and concise:
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Include degree, major, and institution</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Add relevant coursework or honors</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>List certifications and licenses</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="card-elevated hover:card-glow transition-all">
+              <CardHeader>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="outline" className="border-success text-success">
+                    Format
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">Improve Document Structure</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Make your resume easy to scan:
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Use bullet points for achievements</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Keep consistent formatting and spacing</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Limit to 1-2 pages maximum</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold mb-4">Practice Interview Questions</h3>
+            <p className="text-muted-foreground mb-6">
+              Prepare for common questions based on your target role
             </p>
           </div>
 

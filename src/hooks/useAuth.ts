@@ -49,6 +49,14 @@ export const useAuth = () => {
         description: "You have successfully signed in.",
       });
       
+      // Scroll to dashboard after successful login
+      setTimeout(() => {
+        const dashboard = document.getElementById('dashboard');
+        if (dashboard) {
+          dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 500);
+      
       return { error: null };
     } catch (error) {
       toast({

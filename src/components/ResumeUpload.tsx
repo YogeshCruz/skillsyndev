@@ -73,13 +73,27 @@ const ResumeUpload = () => {
         throw new Error(errorData.error || 'Upload failed');
       }
 
+      const result = await response.json();
+      
       setUploadStatus('processing');
       setUploadProgress(100);
+      
+      // Show validation message if resume is invalid
+      if (result.data?.resume_score === 0) {
+        setUploadStatus('error');
+        toast({
+          variant: "destructive",
+          title: "This file doesn't look like a valid résumé",
+          description: "Please upload a proper resume document with your work experience, skills, and education.",
+        });
+        return;
+      }
+      
       setUploadStatus('complete');
       
       toast({
         title: "Resume processed successfully!",
-        description: "Your skills have been analyzed and job matches are ready.",
+        description: `Your resume scored ${result.data?.resume_score || 0}/100. View your dashboard for details.`,
       });
 
     } catch (error) {
@@ -175,7 +189,7 @@ const ResumeUpload = () => {
                     )}
                   </div>
                   <h3 className="text-lg font-semibold mb-2">
-                    {uploadStatus === 'uploading' ? 'Uploading...' : 'Processing...'}
+                    {uploadStatus === 'uploading' ? 'Uploading...' : uploadStatus === 'processing' ? 'Validating resume...' : 'Processing...'}
                   </h3>
                   <p className="text-muted-foreground mb-4">
                     {uploadStatus === 'uploading' 
@@ -194,7 +208,15 @@ const ResumeUpload = () => {
                   <p className="text-muted-foreground mb-6">
                     Your resume has been successfully analyzed. Ready to see your matches?
                   </p>
-                  <Button variant="hero">
+                  <Button 
+                    variant="hero"
+                    onClick={() => {
+                      const dashboard = document.getElementById('dashboard');
+                      if (dashboard) {
+                        dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }}
+                  >
                     View My Dashboard
                   </Button>
                 </div>

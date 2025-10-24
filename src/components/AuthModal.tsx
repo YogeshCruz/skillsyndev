@@ -60,7 +60,10 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
           return;
         }
         
-        await signIn(formData.email, formData.password);
+        const result = await signIn(formData.email, formData.password);
+        if (!result.error) {
+          onOpenChange(false); // Close modal on successful login
+        }
       } else {
         // Full validation for signup including breach check
         const validation = await validateSignUpForm(formData.email, formData.password);
@@ -75,7 +78,10 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
           return;
         }
         
-        await signUp(formData.email, formData.password, formData.fullName);
+        const result = await signUp(formData.email, formData.password, formData.fullName);
+        if (!result.error) {
+          onOpenChange(false); // Close modal on successful signup
+        }
       }
     } catch (error) {
       console.error('Auth error:', error);

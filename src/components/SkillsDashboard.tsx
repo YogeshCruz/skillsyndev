@@ -157,7 +157,18 @@ const SkillsDashboard = () => {
                         {sessionStorage.getItem('resumeScoreExplanation')}
                       </p>
                     )}
-                    <Button variant="outline" size="sm">Improve Score</Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const improveSection = document.getElementById('interview');
+                        if (improveSection) {
+                          improveSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }}
+                    >
+                      Improve Score
+                    </Button>
                   </div>
                 </Card>
               </CardContent>
