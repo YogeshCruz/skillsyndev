@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -13,6 +13,19 @@ const ResumeUpload = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
+  // Reset upload state when user logs in
+  useEffect(() => {
+    if (user) {
+      setUploadStatus('idle');
+      setUploadProgress(0);
+      sessionStorage.removeItem('resumeScore');
+      sessionStorage.removeItem('scoreExplanation');
+      sessionStorage.removeItem('extractedSkills');
+      sessionStorage.removeItem('extractedEducation');
+      sessionStorage.removeItem('extractedExperience');
+    }
+  }, [user?.id]);
+
   const handleFileUpload = async (file: File) => {
     if (!user) {
       toast({
@@ -23,10 +36,11 @@ const ResumeUpload = () => {
       return;
     }
 
-    if (file.type !== 'application/pdf') {
+    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!validTypes.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a PDF file.",
+        description: "Please upload a PDF, DOC, or DOCX file.",
         variant: "destructive",
       });
       return;
@@ -90,6 +104,21 @@ const ResumeUpload = () => {
       }
       
       setUploadStatus('complete');
+      
+      // Store in sessionStorage for dashboard
+      sessionStorage.setItem('resumeScore', String(result.data?.resume_score || 0));
+      if (result.data?.score_explanation) {
+        sessionStorage.setItem('scoreExplanation', result.data.score_explanation);
+      }
+      if (result.data?.skills) {
+        sessionStorage.setItem('extractedSkills', JSON.stringify(result.data.skills));
+      }
+      if (result.data?.education) {
+        sessionStorage.setItem('extractedEducation', JSON.stringify(result.data.education));
+      }
+      if (result.data?.experience) {
+        sessionStorage.setItem('extractedExperience', JSON.stringify(result.data.experience));
+      }
       
       toast({
         title: "Resume processed successfully!",
@@ -156,25 +185,25 @@ const ResumeUpload = () => {
                   className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
-                  onClick={() => document.getElementById('resume-upload')?.click()}
+                  onClick={() => document.getElementById('resumeUploadInput')?.click()}
                 >
                   <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">Drop your resume here</h3>
                   <p className="text-muted-foreground mb-4">
                     or click to browse files
                   </p>
-                  <Button variant="outline">
+                  <Button variant="outline" type="button">
                     Choose File
                   </Button>
                   <input
-                    id="resume-upload"
+                    id="resumeUploadInput"
                     type="file"
-                    accept=".pdf"
+                    accept=".pdf,.doc,.docx"
                     onChange={handleFileChange}
                     className="hidden"
                   />
                   <p className="text-xs text-muted-foreground mt-4">
-                    PDF files only, max 10MB
+                    PDF, DOC, or DOCX files only, max 10MB
                   </p>
                 </div>
               )}

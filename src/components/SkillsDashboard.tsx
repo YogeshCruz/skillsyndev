@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, ExternalLink, Heart, HeartOff, Award, TrendingUp, Target } from "lucide-react";
+import { BookOpen, ExternalLink, Heart, HeartOff, Award, TrendingUp, Target, Upload } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useJobMatches } from "@/hooks/useJobMatches";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ const SkillsDashboard = () => {
   const [userSkills, setUserSkills] = useState<string[]>([]);
   const [resumeScore, setResumeScore] = useState(0);
   const [learningRecommendations, setLearningRecommendations] = useState<any[]>([]);
+  const [hasUploadedResume, setHasUploadedResume] = useState(false);
   
   const { user } = useAuth();
   const { jobMatches, loading, saveJobMatch, unsaveJobMatch } = useJobMatches();
@@ -21,6 +22,13 @@ const SkillsDashboard = () => {
   useEffect(() => {
     if (user) {
       fetchUserData();
+    }
+    
+    // Check if resume has been uploaded in this session
+    const storedScore = sessionStorage.getItem('resumeScore');
+    if (storedScore && parseInt(storedScore) > 0) {
+      setHasUploadedResume(true);
+      setResumeScore(parseInt(storedScore));
     }
   }, [user]);
 
@@ -92,6 +100,42 @@ const SkillsDashboard = () => {
       'AWS': 'Cloud',
     };
     return categories[skill] || 'Other';
+  }
+
+  // Show placeholder if no resume uploaded
+  if (!hasUploadedResume) {
+    return (
+      <section id="dashboard" className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Your Career Dashboard</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Track your progress, discover opportunities, and accelerate your career growth
+            </p>
+          </div>
+          <Card className="max-w-2xl mx-auto text-center py-12 card-elevated">
+            <CardContent className="pt-6">
+              <Upload className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Upload your resume to get your score</h3>
+              <p className="text-muted-foreground mb-6">
+                Get personalized insights, job matches, and skill recommendations
+              </p>
+              <Button 
+                variant="hero"
+                onClick={() => {
+                  const uploadSection = document.getElementById('resume-upload');
+                  if (uploadSection) {
+                    uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }}
+              >
+                Upload Resume
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
   }
 
   return (
