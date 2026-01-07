@@ -66,7 +66,7 @@ const ChatBot = () => {
     };
 
     try {
-      const CHAT_URL = `https://rpkecoyqmpsidaqnlkrp.supabase.co/functions/v1/chat`;
+      const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
       const response = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
