@@ -14,7 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      job_roles: {
+        Row: {
+          created_at: string
+          description: string | null
+          growth_rate: string | null
+          id: string
+          required_skills: string[] | null
+          salary_range: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          growth_rate?: string | null
+          id?: string
+          required_skills?: string[] | null
+          salary_range?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          growth_rate?: string | null
+          id?: string
+          required_skills?: string[] | null
+          salary_range?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      learning_recommendations: {
+        Row: {
+          created_at: string
+          id: string
+          priority: number | null
+          resource_title: string | null
+          resource_url: string | null
+          skill: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          priority?: number | null
+          resource_title?: string | null
+          resource_url?: string | null
+          skill: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          priority?: number | null
+          resource_title?: string | null
+          resource_url?: string | null
+          skill?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      resumes: {
+        Row: {
+          created_at: string
+          education: string[] | null
+          experience: string[] | null
+          file_hash: string | null
+          file_url: string | null
+          filename: string
+          id: string
+          resume_score: number | null
+          score_explanation: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          education?: string[] | null
+          experience?: string[] | null
+          file_hash?: string | null
+          file_url?: string | null
+          filename: string
+          id?: string
+          resume_score?: number | null
+          score_explanation?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          education?: string[] | null
+          experience?: string[] | null
+          file_hash?: string | null
+          file_url?: string | null
+          filename?: string
+          id?: string
+          resume_score?: number | null
+          score_explanation?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_job_matches: {
+        Row: {
+          created_at: string
+          id: string
+          job_role_id: string | null
+          match_score: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_role_id?: string | null
+          match_score?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_role_id?: string | null
+          match_score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_job_matches_job_role_id_fkey"
+            columns: ["job_role_id"]
+            isOneToOne: false
+            referencedRelation: "job_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
