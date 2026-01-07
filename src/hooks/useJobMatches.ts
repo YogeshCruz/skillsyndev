@@ -5,15 +5,34 @@ import { useAuth } from './useAuth';
 export interface JobMatch {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   required_skills: string[];
-  experience_level: string;
-  salary_range: string;
-  industry: string;
+  experience_level?: string;
+  salary_range: string | null;
+  industry?: string;
+  growth_rate?: string | null;
   match_percentage?: number;
   missing_skills?: string[];
   matching_skills?: string[];
   is_saved?: boolean;
+}
+
+interface JobRole {
+  id: string;
+  title: string;
+  description: string | null;
+  required_skills: string[] | null;
+  salary_range: string | null;
+  growth_rate: string | null;
+  created_at: string;
+}
+
+interface Resume {
+  skills: string[] | null;
+}
+
+interface UserJobMatch {
+  is_saved: boolean | null;
 }
 
 export const useJobMatches = () => {
@@ -40,8 +59,8 @@ export const useJobMatches = () => {
       
       // Fetch all job roles
       const { data: jobRoles, error: jobError } = await supabase
-        .from('job_roles')
-        .select('*');
+        .from('job_roles' as any)
+        .select('*') as { data: JobRole[] | null; error: any };
 
       if (jobError) throw jobError;
 
@@ -53,11 +72,11 @@ export const useJobMatches = () => {
 
       // Fetch user's skills from latest resume
       const { data: resumes, error: resumeError } = await supabase
-        .from('resumes')
+        .from('resumes' as any)
         .select('skills')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(1) as { data: Resume[] | null; error: any };
 
       if (resumeError) throw resumeError;
 
@@ -82,11 +101,11 @@ export const useJobMatches = () => {
 
           // Check if this job is saved by the user
           const { data: savedMatch } = await supabase
-            .from('user_job_matches')
+            .from('user_job_matches' as any)
             .select('is_saved')
             .eq('user_id', user.id)
             .eq('job_role_id', job.id)
-            .single();
+            .maybeSingle() as { data: UserJobMatch | null; error: any };
 
           return {
             ...job,
@@ -124,7 +143,7 @@ export const useJobMatches = () => {
       }
 
       // Call secure edge function
-      const response = await fetch(`https://rpkecoyqmpsidaqnlkrp.supabase.co/functions/v1/job-matches`, {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/job-matches`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -165,7 +184,7 @@ export const useJobMatches = () => {
       }
 
       // Call secure edge function
-      const response = await fetch(`https://rpkecoyqmpsidaqnlkrp.supabase.co/functions/v1/job-matches`, {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/job-matches`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${session.access_token}`,

@@ -123,22 +123,31 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_saved: boolean | null
           job_role_id: string | null
           match_score: number | null
+          matching_skills: string[] | null
+          missing_skills: string[] | null
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          is_saved?: boolean | null
           job_role_id?: string | null
           match_score?: number | null
+          matching_skills?: string[] | null
+          missing_skills?: string[] | null
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          is_saved?: boolean | null
           job_role_id?: string | null
           match_score?: number | null
+          matching_skills?: string[] | null
+          missing_skills?: string[] | null
           user_id?: string
         }
         Relationships: [
