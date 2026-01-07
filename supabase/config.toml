@@ -1,1 +1,13 @@
 project_id = "lggdqycygscofojywkmg"
+
+[functions.chat]
+verify_jwt = false
+
+[functions.upload-resume]
+verify_jwt = false
+
+[functions.job-matches]
+verify_jwt = false
+
+[functions.weekly-action-plan]
+verify_jwt = false

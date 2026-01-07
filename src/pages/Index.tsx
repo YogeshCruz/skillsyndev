@@ -12,6 +12,7 @@ import SkillMapVisualizer from "@/components/SkillMapVisualizer";
 import MarketTrendsFeed from "@/components/MarketTrendsFeed";
 import MicroMissions from "@/components/MicroMissions";
 import CareerPathSimulator from "@/components/CareerPathSimulator";
+import WeeklyActionPlan from "@/components/WeeklyActionPlan";
 import ChatBot from "@/components/ChatBot";
 import Footer from "@/components/Footer";
 
@@ -52,6 +53,9 @@ const Index = () => {
       </div>
       <div id="career-simulator">
         <CareerPathSimulator />
+      </div>
+      <div id="weekly-plan">
+        <WeeklyActionPlan />
       </div>
       <div id="pricing">
         <Pricing />
