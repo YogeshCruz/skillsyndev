@@ -9,6 +9,25 @@ import { useAuth } from "@/hooks/useAuth";
 import { useJobMatches } from "@/hooks/useJobMatches";
 import { supabase } from "@/integrations/supabase/client";
 
+interface ResumeData {
+  skills: string[] | null;
+  resume_score: number | null;
+  score_explanation: string | null;
+}
+
+interface LearningRecommendation {
+  id: string;
+  skill: string;
+  resource_title: string | null;
+  resource_url: string | null;
+  priority: number | null;
+  recommendation_type?: string;
+  title?: string;
+  provider?: string;
+  description?: string;
+  url?: string;
+}
+
 const SkillsDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [userSkills, setUserSkills] = useState<string[]>([]);
@@ -38,11 +57,11 @@ const SkillsDashboard = () => {
     try {
       // Fetch user's latest resume data
       const { data: resumes } = await supabase
-        .from('resumes')
+        .from('resumes' as any)
         .select('skills, resume_score, score_explanation')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(1) as { data: ResumeData[] | null; error: any };
 
       if (resumes && resumes.length > 0) {
         setUserSkills(resumes[0].skills || []);
@@ -56,9 +75,9 @@ const SkillsDashboard = () => {
 
       // Fetch learning recommendations
       const { data: recommendations } = await supabase
-        .from('learning_recommendations')
+        .from('learning_recommendations' as any)
         .select('*')
-        .limit(6);
+        .limit(6) as { data: LearningRecommendation[] | null; error: any };
       
       setLearningRecommendations(recommendations || []);
     } catch (error) {
