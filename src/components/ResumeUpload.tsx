@@ -72,7 +72,7 @@ const ResumeUpload = () => {
       setUploadProgress(30);
 
       // Call secure edge function for upload
-      const response = await fetch(`https://rpkecoyqmpsidaqnlkrp.supabase.co/functions/v1/upload-resume`, {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-resume`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${session.access_token}`,
