@@ -66,7 +66,16 @@ const HowItWorks = () => {
         </div>
 
         <div className="text-center">
-          <Button size="lg" className="bg-gradient-to-r from-primary to-primary-hover text-primary-foreground px-8 py-3">
+          <Button 
+            size="lg" 
+            className="bg-gradient-to-r from-primary to-primary-hover text-primary-foreground px-8 py-3"
+            onClick={() => {
+              const uploadSection = document.getElementById('resume-upload');
+              if (uploadSection) {
+                uploadSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+          >
             Start Your Career Journey
           </Button>
         </div>

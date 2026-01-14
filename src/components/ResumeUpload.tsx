@@ -241,17 +241,29 @@ const ResumeUpload = () => {
                   <p className="text-muted-foreground mb-6">
                     Your resume has been successfully analyzed. Ready to see your matches?
                   </p>
-                  <Button 
-                    variant="hero"
-                    onClick={() => {
-                      const dashboard = document.getElementById('dashboard');
-                      if (dashboard) {
-                        dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }}
-                  >
-                    View My Dashboard
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button 
+                      variant="hero"
+                      onClick={() => {
+                        const dashboard = document.getElementById('dashboard');
+                        if (dashboard) {
+                          dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }}
+                    >
+                      View My Dashboard
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setUploadStatus('idle');
+                        setUploadProgress(0);
+                      }}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload Another Resume
+                    </Button>
+                  </div>
                 </div>
               )}
 
