@@ -29,7 +29,7 @@ const Hero = () => {
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
               Sync Your Skills with{" "}
-              <span className="text-primary glow-yellow-strong drop-shadow-[0_0_25px_rgba(255,193,7,0.5)]">
+              <span className="text-gradient-hero">
                 Dream Careers
               </span>
             </h1>
