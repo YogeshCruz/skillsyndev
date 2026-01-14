@@ -44,11 +44,32 @@ const SkillsDashboard = () => {
     }
     
     // Check if resume has been uploaded in this session
-    const storedScore = sessionStorage.getItem('resumeScore');
-    if (storedScore && parseInt(storedScore) > 0) {
-      setHasUploadedResume(true);
-      setResumeScore(parseInt(storedScore));
-    }
+    const checkSessionStorage = () => {
+      const storedScore = sessionStorage.getItem('resumeScore');
+      if (storedScore && parseInt(storedScore) > 0) {
+        setHasUploadedResume(true);
+        setResumeScore(parseInt(storedScore));
+        
+        // Also get explanation from correct key
+        const explanation = sessionStorage.getItem('scoreExplanation');
+        if (explanation) {
+          sessionStorage.setItem('resumeScoreExplanation', explanation);
+        }
+      }
+    };
+    
+    checkSessionStorage();
+    
+    // Listen for resume upload events
+    const handleResumeUploaded = () => {
+      checkSessionStorage();
+      if (user) {
+        fetchUserData();
+      }
+    };
+    
+    window.addEventListener('resumeUploaded', handleResumeUploaded);
+    return () => window.removeEventListener('resumeUploaded', handleResumeUploaded);
   }, [user]);
 
   const fetchUserData = async () => {
@@ -124,7 +145,7 @@ const SkillsDashboard = () => {
   // Show placeholder if no resume uploaded
   if (!hasUploadedResume) {
     return (
-      <section id="dashboard" className="py-16 bg-background">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Your Career Dashboard</h2>
@@ -158,7 +179,7 @@ const SkillsDashboard = () => {
   }
 
   return (
-    <section id="dashboard" className="py-16 bg-background">
+    <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Your Career Dashboard</h2>

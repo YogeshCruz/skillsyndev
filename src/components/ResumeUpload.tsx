@@ -109,6 +109,7 @@ const ResumeUpload = () => {
       sessionStorage.setItem('resumeScore', String(result.data?.resume_score || 0));
       if (result.data?.score_explanation) {
         sessionStorage.setItem('scoreExplanation', result.data.score_explanation);
+        sessionStorage.setItem('resumeScoreExplanation', result.data.score_explanation);
       }
       if (result.data?.skills) {
         sessionStorage.setItem('extractedSkills', JSON.stringify(result.data.skills));
@@ -119,6 +120,9 @@ const ResumeUpload = () => {
       if (result.data?.experience) {
         sessionStorage.setItem('extractedExperience', JSON.stringify(result.data.experience));
       }
+      
+      // Dispatch event to notify dashboard
+      window.dispatchEvent(new CustomEvent('resumeUploaded'));
       
       toast({
         title: "Resume processed successfully!",
