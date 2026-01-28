@@ -7,6 +7,12 @@ import { Progress } from "@/components/ui/progress";
 import { Sparkles, TrendingUp, RotateCcw, Zap } from "lucide-react";
 import { JobMatch } from "@/hooks/useJobMatches";
 
+interface SimulatedJobMatch extends JobMatch {
+  simulated_percentage?: number;
+  original_percentage?: number;
+  improvement?: number;
+}
+
 interface WhatIfSimulatorProps {
   jobMatches: JobMatch[];
   userSkills: string[];
@@ -48,7 +54,7 @@ const WhatIfSimulator = ({ jobMatches, userSkills }: WhatIfSimulatorProps) => {
   }, [allMissingSkills, jobMatches]);
 
   // Simulate new match percentages
-  const simulatedMatches = useMemo(() => {
+  const simulatedMatches: SimulatedJobMatch[] = useMemo(() => {
     if (selectedSkills.length === 0) return jobMatches;
 
     return jobMatches.map(job => {
