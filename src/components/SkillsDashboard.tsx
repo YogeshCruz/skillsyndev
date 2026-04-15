@@ -88,6 +88,7 @@ const SkillsDashboard = () => {
       if (resumes && resumes.length > 0) {
         setUserSkills(resumes[0].skills || []);
         setResumeScore(resumes[0].resume_score || 0);
+        setHasUploadedResume(true);
         
         // Store score explanation if available
         if (resumes[0].score_explanation) {
