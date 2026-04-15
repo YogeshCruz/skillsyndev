@@ -184,7 +184,7 @@ const ResumeUpload = () => {
                   className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
-                  onClick={() => document.getElementById('resumeUploadInput')?.click()}
+                  onClick={() => fileInputRef.current?.click()}
                 >
                   <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">Drop your resume here</h3>
@@ -195,14 +195,14 @@ const ResumeUpload = () => {
                     Choose File
                   </Button>
                   <input
-                    id="resumeUploadInput"
+                    ref={fileInputRef}
                     type="file"
-                    accept=".pdf,.doc,.docx"
+                    accept=".pdf"
                     onChange={handleFileChange}
                     className="hidden"
                   />
                   <p className="text-xs text-muted-foreground mt-4">
-                    PDF, DOC, or DOCX files only, max 10MB
+                    PDF files only, max 10MB
                   </p>
                 </div>
               )}
