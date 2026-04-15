@@ -130,9 +130,7 @@ const ResumeUpload = () => {
       });
 
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[Dev] Upload error:', error);
-      }
+      console.error('Upload error:', error);
       setUploadStatus('error');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
