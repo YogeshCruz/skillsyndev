@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -26,7 +26,9 @@ const ResumeUpload = () => {
     }
   }, [user?.id]);
 
-  const handleFileUpload = async (file: File) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = useCallback(async (file: File) => {
     if (!user) {
       toast({
         variant: "destructive",
@@ -36,17 +38,16 @@ const ResumeUpload = () => {
       return;
     }
 
-    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (!validTypes.includes(file.type)) {
+    if (file.type !== 'application/pdf') {
       toast({
         title: "Invalid file type",
-        description: "Please upload a PDF, DOC, or DOCX file.",
+        description: "Please upload a PDF file.",
         variant: "destructive",
       });
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+    if (file.size > 10 * 1024 * 1024) {
       toast({
         title: "File too large",
         description: "Please upload a file smaller than 10MB.",
@@ -59,19 +60,16 @@ const ResumeUpload = () => {
     setUploadProgress(0);
 
     try {
-      // Get session token
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
         throw new Error('No valid session');
       }
 
-      // Create form data
       const formData = new FormData();
       formData.append('file', file);
 
       setUploadProgress(30);
 
-      // Call secure edge function for upload
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-resume`, {
         method: 'POST',
         headers: {
@@ -92,7 +90,6 @@ const ResumeUpload = () => {
       setUploadStatus('processing');
       setUploadProgress(100);
       
-      // Show validation message if resume is invalid
       if (result.data?.resume_score === 0) {
         setUploadStatus('error');
         toast({
@@ -105,7 +102,6 @@ const ResumeUpload = () => {
       
       setUploadStatus('complete');
       
-      // Store in sessionStorage for dashboard
       sessionStorage.setItem('resumeScore', String(result.data?.resume_score || 0));
       if (result.data?.score_explanation) {
         sessionStorage.setItem('scoreExplanation', result.data.score_explanation);
@@ -121,7 +117,6 @@ const ResumeUpload = () => {
         sessionStorage.setItem('extractedExperience', JSON.stringify(result.data.experience));
       }
       
-      // Dispatch event to notify dashboard
       window.dispatchEvent(new CustomEvent('resumeUploaded'));
       
       toast({
@@ -139,13 +134,15 @@ const ResumeUpload = () => {
         description: errorMessage.includes('Rate limit') ? errorMessage : "There was an error processing your resume. Please try again.",
       });
     }
-  };
+  }, [user, toast]);
 
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       handleFileUpload(file);
     }
+    // Reset input so same file can be re-uploaded
+    if (event.target) event.target.value = '';
   }, [handleFileUpload]);
 
   const handleDrop = useCallback((event: React.DragEvent) => {
