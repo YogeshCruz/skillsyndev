@@ -8,6 +8,7 @@ import { BookOpen, ExternalLink, Heart, HeartOff, Award, TrendingUp, Target, Upl
 import { useAuth } from "@/hooks/useAuth";
 import { useJobMatches } from "@/hooks/useJobMatches";
 import { supabase } from "@/integrations/supabase/client";
+import JobRecommendations from "@/components/JobRecommendations";
 
 interface ResumeData {
   skills: string[] | null;
@@ -102,9 +103,7 @@ const SkillsDashboard = () => {
       
       setLearningRecommendations(recommendations || []);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[Dev] Error fetching user data:', error);
-      }
+      console.error('Error fetching user data:', error);
     }
   };
 
@@ -255,6 +254,9 @@ const SkillsDashboard = () => {
                     </Button>
                   </div>
                 </Card>
+
+                {/* Dataset-driven Job Recommendations */}
+                <JobRecommendations userSkills={userSkills} resumeScore={resumeScore} />
               </CardContent>
             </Card>
           </TabsContent>
