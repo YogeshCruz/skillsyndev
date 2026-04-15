@@ -124,9 +124,7 @@ export const useJobMatches = () => {
 
       setJobMatches(sortedMatches);
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[Dev] Error fetching job matches:', error);
-      }
+      console.error('Error fetching job matches:', error);
     } finally {
       setLoading(false);
     }
@@ -167,9 +165,7 @@ export const useJobMatches = () => {
         job.id === jobId ? { ...job, is_saved: true } : job
       ));
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[Dev] Error saving job match:', error);
-      }
+      console.error('Error saving job match:', error);
     }
   };
 
@@ -205,9 +201,7 @@ export const useJobMatches = () => {
         job.id === jobId ? { ...job, is_saved: false } : job
       ));
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[Dev] Error unsaving job match:', error);
-      }
+      console.error('Error unsaving job match:', error);
     }
   };
 
